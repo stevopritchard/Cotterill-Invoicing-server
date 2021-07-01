@@ -1,0 +1,31 @@
+{
+  "locations": [],
+  "properties": [],
+  "mid": "",
+  "locale": "en",
+  "description": "POWER SUPPLY\nTHE CALCULATOR IS POWERED BY\nSOLAR CELL AND A BATTERY FOR\nBACKUP. THE DISPLAY WILL DIM WHEN\nTHE BATTERY NEEDS TO BE REPLACED.\nTHE \"+\" SIGN OF EACH BATTERY MUST\nSHOW UPWARD WHEN INSERTED.\n",
+  "score": 0,
+  "confidence": 0,
+  "topicality": 0,
+  "boundingPoly": {
+    "vertices": [
+      {
+        "x": 6,
+        "y": 7
+      },
+      {
+        "x": 281,
+        "y": 7
+      },
+      {
+        "x": 281,
+        "y": 112
+      },
+      {
+        "x": 6,
+        "y": 112
+      }
+    ],
+    "normalizedVertices": []
+  }
+}
