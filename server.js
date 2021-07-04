@@ -1,7 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
 const aws = require('aws-sdk');
-const config = require('../../Access Keys/AWS/config')
 const multer = require('multer');
 const fs = require('fs');
 const cors = require('cors');
