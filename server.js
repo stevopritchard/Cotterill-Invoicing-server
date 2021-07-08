@@ -29,7 +29,7 @@ const upload = multer({ storage: storage })
 
 app.use(bodyParser.json());
 var corsOptions = {
-    origin: 'https://tranquil-yellowstone-86058.herokuapp.com/',
+    origin: 'https://tranquil-yellowstone-86058.herokuapp.com',
     optionSuccessStatus: 200
 }
 app.use(cors(corsOptions));
