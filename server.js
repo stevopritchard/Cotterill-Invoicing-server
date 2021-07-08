@@ -29,10 +29,10 @@ const upload = multer({ storage: storage })
 
 app.use(bodyParser.json());
 var corsOptions = {
-    origin: 'https://tranquil-yellowstone-86058.herokuapp.com',
+    origin: 'http://localhost:3000',
     optionSuccessStatus: 200
 }
-app.use(cors(corsOptions));
+app.use(cors());
 app.use(express.static('public'));
 
 const port = process.env.PORT || 5000;
