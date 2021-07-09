@@ -27,9 +27,17 @@ var storage = multer.diskStorage({
 
 const upload = multer({ storage: storage })
 
+var whitelist = [
+    'https://radiant-crag-07404.herokuapp.com/',
+    'http://localhost:3000',
+]
+
 app.use(bodyParser.json());
 var corsOptions = {
-    origin: 'http://localhost:3000',
+    origin: function(origin, callback) {
+        var originIsWhitelisted = whitelist.indexOf(origin) != -1;
+        callback(null, originIsWhitelisted)
+    },
     credentials: true,
     optionSuccessStatus: 200
 }
