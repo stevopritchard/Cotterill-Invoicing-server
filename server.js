@@ -35,7 +35,7 @@ var whitelist = [
 app.use(bodyParser.json());
 var corsOptions = {
     origin: function(origin, callback) {
-        var originIsWhitelisted = whitelist.indexOf(origin) != -1;
+        var originIsWhitelisted = whitelist.indexOf(origin) !== -1;
         callback(null, originIsWhitelisted)
     },
     credentials: true,
