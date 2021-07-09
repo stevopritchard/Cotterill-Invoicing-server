@@ -30,22 +30,16 @@ const upload = multer({ storage: storage })
 app.use(bodyParser.json());
 var corsOptions = {
     origin: 'http://localhost:3000',
+    credentials: true,
     optionSuccessStatus: 200
 }
-app.use(cors());
+app.use(cors(corsOptions));
 app.use(express.static('public'));
 
 const port = process.env.PORT || 5000;
 
 app.listen(port, () => console.log(`Listening on port ${port}`));
-console.log(__dirname)
 
-
-// aws.config.update({
-//     accessKeyId: config.awsAccesskeyID,
-//     secretAccessKey: config.secretAccessKey,
-//     region: config.awsRegion
-// })
 aws.config.update({
     accessKeyId: process.env.AWS_ACCESS_KEY_ID,
     secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
