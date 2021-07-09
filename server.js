@@ -34,10 +34,11 @@ var whitelist = [
 
 app.use(bodyParser.json());
 var corsOptions = {
-    origin: function(origin, callback) {
-        var originIsWhitelisted = whitelist.indexOf(origin) !== -1;
-        callback(null, originIsWhitelisted)
-    },
+    // origin: function(origin, callback) {
+    //     var originIsWhitelisted = whitelist.indexOf(origin) !== -1;
+    //     callback(null, originIsWhitelisted)
+    // },
+    origin: 'https://radiant-crag-07404.herokuapp.com/',
     credentials: true,
     optionSuccessStatus: 200
 }
