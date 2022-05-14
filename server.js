@@ -5,11 +5,8 @@ const multer = require('multer');
 const fs = require('fs');
 const cors = require('cors');
 require('dotenv').config();
-
-// this module was imported to handle the request headers for the BP endpoint; can be removed...
 const postmanRequest = require('postman-request');
 
-// ..and so can these API keys
 const bpAPIKey = process.env.BP_API_KEY;
 const bpAppRef = process.env.BP_APP_REF;
 
@@ -58,7 +55,7 @@ aws.config.update({
 const textract = new aws.Textract();
 
 app.post('/getFormData', upload.array('photo'), (req, res) => {
-  console.log(req.files);
+  // console.log(req.files);
   getFormData.textractForm(req, res, textract);
 });
 
@@ -66,31 +63,25 @@ app.post('/getTableData', upload.single('photo'), (req, res) => {
   getTableData.textractTable(req, res, textract);
 });
 
-// app.post('/writeToFile', (req, res) => {
-//     // console.log(typeof JSON.stringify(req.body))
-//     fs.writeFileSync('public/img/test.json', JSON.stringify(req.body));
-// })
-
-// this endpoint needs to be removed
-app.post('/queryBp', (req, res) => {
-  postmanRequest(
-    {
-      uri: `https://ws-eu1.brightpearl.com/public-api/cotterillcivilslimited/order-service/order/${req.body.orderId}`,
-      headers: {
-        'brightpearl-app-ref': bpAppRef,
-        'brightpearl-account-token': bpAPIKey,
-      },
-    },
-    (error, response, body) => {
-      const orderInfo = JSON.parse(body);
-      if (!error && orderInfo.response[0]) {
-        res.json(orderInfo.response[0]);
-      } else {
-        res.json(error);
-      }
-    }
-  );
-});
+// app.post('/queryBp', (req, res) => {
+//   postmanRequest(
+//     {
+//       uri: `https://ws-eu1.brightpearl.com/public-api/cotterillcivilslimited/order-service/order/${req.body.orderId}`,
+//       headers: {
+//         'brightpearl-app-ref': bpAppRef,
+//         'brightpearl-account-token': bpAPIKey,
+//       },
+//     },
+//     (error, response, body) => {
+//       const orderInfo = JSON.parse(body);
+//       if (!error && orderInfo.response[0]) {
+//         res.json(orderInfo.response[0]);
+//       } else {
+//         res.json(error);
+//       }
+//     }
+//   );
+// });
 
 // creates a new JSON Invoice object
 app.post('/writeInvoice', (req, res) => {
