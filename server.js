@@ -5,10 +5,6 @@ const multer = require('multer');
 const fs = require('fs');
 const cors = require('cors');
 require('dotenv').config();
-const postmanRequest = require('postman-request');
-
-const bpAPIKey = process.env.BP_API_KEY;
-const bpAppRef = process.env.BP_APP_REF;
 
 require('./src/db/mongoose');
 const Invoice = require('./src/models/Invoice');
@@ -29,7 +25,7 @@ var storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 var whitelist = [
-  'https://radiant-crag-07404.herokuapp.com/',
+  'https://cotterill-invoicing-client.herokuapp.com/',
   'http://localhost:3000',
 ];
 
@@ -62,26 +58,6 @@ app.post('/getFormData', upload.array('photo'), (req, res) => {
 app.post('/getTableData', upload.single('photo'), (req, res) => {
   getTableData.textractTable(req, res, textract);
 });
-
-// app.post('/queryBp', (req, res) => {
-//   postmanRequest(
-//     {
-//       uri: `https://ws-eu1.brightpearl.com/public-api/cotterillcivilslimited/order-service/order/${req.body.orderId}`,
-//       headers: {
-//         'brightpearl-app-ref': bpAppRef,
-//         'brightpearl-account-token': bpAPIKey,
-//       },
-//     },
-//     (error, response, body) => {
-//       const orderInfo = JSON.parse(body);
-//       if (!error && orderInfo.response[0]) {
-//         res.json(orderInfo.response[0]);
-//       } else {
-//         res.json(error);
-//       }
-//     }
-//   );
-// });
 
 // creates a new JSON Invoice object
 app.post('/writeInvoice', (req, res) => {
