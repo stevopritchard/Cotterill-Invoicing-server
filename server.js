@@ -92,7 +92,10 @@ app.post('/queryInvoice', (req, res) => {
   Invoice.find(req.body)
     .then((returnedInvoice) => {
       if (returnedInvoice.length == 1) {
-        if (returnedInvoice[0].validNumber === parseInt(req.body.validNumber)) {
+        if (
+          returnedInvoice[0].validRefNumber ===
+          parseInt(req.body.validRefNumber)
+        ) {
           res.send(returnedInvoice);
         } else {
           throw new Error(`No matching PO found.`);
@@ -102,7 +105,7 @@ app.post('/queryInvoice', (req, res) => {
       }
     })
     .catch((error) => {
-      console.log(req.body.validNumber + ': ' + error);
+      console.log(req.body.validRefNumber + ': ' + error);
       res.json(error);
     });
 });
@@ -110,9 +113,9 @@ app.post('/queryInvoice', (req, res) => {
 app.post('/deleteInvoice', (req, res) => {
   Invoice.find(req.body).then((toDelete) => {
     if (toDelete.length === 1) {
-      if (toDelete[0].validNumber === req.body.validNumber) {
+      if (toDelete[0].validRefNumber === req.body.validRefNumber) {
         Invoice.deleteOne(
-          { validNumber: req.body.validNumber },
+          { validRefNumber: req.body.validRefNumber },
           function (err) {
             if (err) throw new Error('No matching PO found.');
             res.send('Sucessful deletion');
