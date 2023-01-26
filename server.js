@@ -8,6 +8,7 @@ require('dotenv').config();
 
 require('./src/db/mongoose');
 const Invoice = require('./src/models/Invoice');
+const PurchaseOrder = require('./src/models/PurchaseOrder');
 
 const app = express();
 
@@ -48,6 +49,7 @@ aws.config.update({
   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
   region: process.env.AWS_REGION,
 });
+
 const textract = new aws.Textract();
 
 app.post('/getFormData', upload.array('photo'), (req, res) => {
@@ -57,6 +59,19 @@ app.post('/getFormData', upload.array('photo'), (req, res) => {
 
 app.post('/getTableData', upload.single('photo'), (req, res) => {
   getTableData.textractTable(req, res, textract);
+});
+
+app.post('/writePurchaseOrder', (req, res) => {
+  const purchaseOrder = new PurchaseOrder(req.body);
+
+  purchaseOrder
+    .save()
+    .then(() => {
+      res.send(purchaseOrder);
+    })
+    .catch((err) => {
+      throw new Error(err);
+    });
 });
 
 // creates a new JSON Invoice object
