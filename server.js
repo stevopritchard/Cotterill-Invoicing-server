@@ -96,27 +96,18 @@ app.post('/queryPurchaseOrder', (req, res) => {
     .catch((err) => res.json(err));
 });
 
-app.post('/queryInvoice', (req, res) => {
-  console.log(Invoice.find(req.body));
-  Invoice.find(req.body)
+app.post('/queryInvoice', async (req, res) => {
+  let invoice = Invoice.findOne({ validRefNumber: req.body.validRefNumber });
+  console.log(invoice);
+  invoice
     .then((returnedInvoice) => {
-      if (returnedInvoice.length == 1) {
-        if (
-          returnedInvoice[0].validRefNumber ===
-          parseInt(req.body.validRefNumber)
-        ) {
-          res.send(returnedInvoice);
-        } else {
-          throw new Error(`No matching PO found.`);
-        }
-      } else {
-        throw new Error(`Does not appear to be a valid number`);
+      if (returnedInvoice) {
+        res.send(returnedInvoice);
       }
     })
-    .catch((err) => {
-      console.log(req.body.validRefNumber + ': ' + err);
-      res.json(err);
-    });
+    .catch((err) =>
+      res.json(`Cannot find invoice with ref # ${req.body.validRefNumber}.`)
+    );
 });
 
 app.post('/fulfillPurchaseOrder', async (req, res) => {
