@@ -18,11 +18,11 @@ const PurchaseOrder = mongoose.model('PurchaseOrder', {
   },
 });
 
-const dummyPO = new PurchaseOrder({
-  name: 'test',
-  refNumber: 123456,
-  isFulfilled: false,
-});
+// const dummyPO = new PurchaseOrder({
+//   name: 'test',
+//   refNumber: 123456,
+//   isFulfilled: false,
+// });
 // dummyPO.save();
 
 module.exports = PurchaseOrder;

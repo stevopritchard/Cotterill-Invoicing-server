@@ -88,7 +88,16 @@ app.post('/writeInvoice', (req, res) => {
     });
 });
 
+app.post('/queryPurchaseOrder', (req, res) => {
+  PurchaseOrder.find(req.body)
+    .then((foundPO) => {
+      res.send(foundPO);
+    })
+    .catch((err) => res.json(err));
+});
+
 app.post('/queryInvoice', (req, res) => {
+  console.log(Invoice.find(req.body));
   Invoice.find(req.body)
     .then((returnedInvoice) => {
       if (returnedInvoice.length == 1) {
@@ -104,9 +113,43 @@ app.post('/queryInvoice', (req, res) => {
         throw new Error(`Does not appear to be a valid number`);
       }
     })
-    .catch((error) => {
-      console.log(req.body.validRefNumber + ': ' + error);
-      res.json(error);
+    .catch((err) => {
+      console.log(req.body.validRefNumber + ': ' + err);
+      res.json(err);
+    });
+});
+
+app.post('/fulfillPurchaseOrder', async (req, res) => {
+  const purchaseOrder = await PurchaseOrder.findOne({
+    refNumber: req.body.refNumber,
+  });
+
+  purchaseOrder.set({ isFulfilled: true });
+
+  await purchaseOrder
+    .save()
+    .then((fulfilledPO) => {
+      res.send(fulfilledPO);
+    })
+    .catch((err) => {
+      throw new Error(err);
+    });
+});
+
+app.post('/unFulfillPurchaseOrder', async (req, res) => {
+  const purchaseOrder = await PurchaseOrder.findOne({
+    refNumber: req.body.refNumber,
+  });
+
+  purchaseOrder.set({ isFulfilled: false });
+
+  await purchaseOrder
+    .save()
+    .then((fulfilledPO) => {
+      res.send(fulfilledPO);
+    })
+    .catch((err) => {
+      throw new Error(err);
     });
 });
 
@@ -134,6 +177,6 @@ app.get('/getAllInvoices', (req, res) => {
       res.send(invoiceList);
     })
     .catch((error) => {
-      console.log(error);
+      res.json(error);
     });
 });
