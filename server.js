@@ -41,8 +41,9 @@ app.use(cors());
 app.use(express.static('public'));
 
 const port = process.env.PORT || 5000;
-
-app.listen(port, () => console.log(`Listening on port ${port}`));
+if (process.env.NODE_ENV !== 'test') {
+  app.listen(port, () => console.log(`Listening on port ${port}`));
+}
 
 aws.config.update({
   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
@@ -53,7 +54,6 @@ aws.config.update({
 const textract = new aws.Textract();
 
 app.post('/getFormData', upload.array('photo'), (req, res) => {
-  // console.log(req.files);
   getFormData.textractForm(req, res, textract);
 });
 
@@ -89,25 +89,29 @@ app.post('/writeInvoice', (req, res) => {
 });
 
 app.post('/queryPurchaseOrder', (req, res) => {
-  PurchaseOrder.find(req.body)
+  const { refNumber } = req.body;
+
+  PurchaseOrder.findOne({ refNumber: refNumber })
     .then((foundPO) => {
-      res.send(foundPO);
+      foundPO ? res.send(foundPO) : res.send(false);
     })
-    .catch((err) => res.json(err));
+    .catch((err) =>
+      res.json(`Cannot find purchase order with ref # ${refNumber}.`)
+    );
 });
 
 app.post('/queryInvoice', async (req, res) => {
-  let invoice = Invoice.findOne({ validRefNumber: req.body.validRefNumber });
-  console.log(invoice);
-  invoice
+  const { validRefNumber } = req.body;
+
+  Invoice.findOne({
+    validRefNumber: validRefNumber,
+  })
     .then((returnedInvoice) => {
-      if (returnedInvoice) {
-        res.send(returnedInvoice);
-      }
+      returnedInvoice ? res.send(returnedInvoice) : res.send(false);
     })
-    .catch((err) =>
-      res.json(`Cannot find invoice with ref # ${req.body.validRefNumber}.`)
-    );
+    .catch((err) => {
+      throw new Error(err);
+    });
 });
 
 app.post('/fulfillPurchaseOrder', async (req, res) => {
@@ -171,3 +175,5 @@ app.get('/getAllInvoices', (req, res) => {
       res.json(error);
     });
 });
+
+module.exports = app;
