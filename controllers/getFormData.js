@@ -120,9 +120,12 @@ const textractForm = (req, res, textract) => {
       return fileInfo;
     }
   });
-  Promise.all(requests)
-    .then((data) => res.json(data))
-    .catch((err) => console.log('Error:', err));
+  return requests;
+  // Promise.all(requests)
+  //   .then((data) => {
+  //     res.json(data);
+  //   })
+  //   .catch((err) => console.log('Error:', err));
 };
 
 module.exports = {

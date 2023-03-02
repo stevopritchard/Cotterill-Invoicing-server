@@ -9,6 +9,7 @@ require('dotenv').config();
 require('./src/db/mongoose');
 const Invoice = require('./src/models/Invoice');
 const PurchaseOrder = require('./src/models/PurchaseOrder');
+const validateInvoiceNumber = require('./controllers/validateInvoiceNumber');
 
 const app = express();
 
@@ -31,12 +32,14 @@ var whitelist = [
 ];
 
 app.use(bodyParser.json());
+
 var corsOptions = {
   origin: function (origin, callback) {
     var originIsWhitelisted = whitelist.indexOf(origin) !== -1;
     callback(null, originIsWhitelisted);
   },
 };
+
 app.use(cors());
 app.use(express.static('public'));
 
@@ -53,8 +56,29 @@ aws.config.update({
 
 const textract = new aws.Textract();
 
-app.post('/getFormData', upload.array('photo'), (req, res) => {
-  getFormData.textractForm(req, res, textract);
+app.post('/getFormData', upload.array('photo'), (req, res, next) => {
+  Promise.all(getFormData.textractForm(req, res, textract))
+    .then((data) => {
+      res.locals.formResponseData = data;
+      next();
+    })
+    .catch((err) => console.log('Error:', err));
+});
+
+//middleware to recieve getFormData response object
+app.use('/getFormData', (req, res) => {
+  if (res.locals.formResponseData) {
+    Promise.all(
+      Object.values(res.locals.formResponseData).map((invoice) => {
+        return {
+          ...invoice,
+          validRefNumber: invoice.candidateRefNumbers.find((refNumber) => {
+            return validateInvoiceNumber(refNumber);
+          }),
+        };
+      })
+    ).then((validInvoices) => res.send(validInvoices));
+  }
 });
 
 app.post('/getTableData', upload.single('photo'), (req, res) => {
