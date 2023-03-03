@@ -9,12 +9,13 @@ require('dotenv').config();
 require('./src/db/mongoose');
 const Invoice = require('./src/models/Invoice');
 const PurchaseOrder = require('./src/models/PurchaseOrder');
-const validateInvoiceNumber = require('./controllers/validateInvoiceNumber');
 
 const app = express();
 
 // handlers for the Textract response objects
+const textractForm = require('./controllers/textractForm');
 const getFormData = require('./controllers/getFormData');
+const validateInvoiceNumber = require('./controllers/validateInvoiceNumber');
 const getTableData = require('./controllers/getTableData');
 
 var storage = multer.diskStorage({
@@ -56,29 +57,10 @@ aws.config.update({
 
 const textract = new aws.Textract();
 
-app.post('/getFormData', upload.array('photo'), (req, res, next) => {
-  Promise.all(getFormData.textractForm(req, res, textract))
-    .then((data) => {
-      res.locals.formResponseData = data;
-      next();
-    })
+app.post('/getFormData', upload.array('photo'), (req, res) => {
+  getFormData(req)
+    .then((validInvoices) => res.send(validInvoices))
     .catch((err) => console.log('Error:', err));
-});
-
-//middleware to recieve getFormData response object
-app.use('/getFormData', (req, res) => {
-  if (res.locals.formResponseData) {
-    Promise.all(
-      Object.values(res.locals.formResponseData).map((invoice) => {
-        return {
-          ...invoice,
-          validRefNumber: invoice.candidateRefNumbers.find((refNumber) => {
-            return validateInvoiceNumber(refNumber);
-          }),
-        };
-      })
-    ).then((validInvoices) => res.send(validInvoices));
-  }
 });
 
 app.post('/getTableData', upload.single('photo'), (req, res) => {

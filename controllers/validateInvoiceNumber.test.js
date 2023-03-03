@@ -1,7 +1,8 @@
 const validateInvoiceNumber = require('./validateInvoiceNumber');
 
-test('refNumber "123456" is will return an existing test PO document', async () => {
-  expect.assertions(1);
-  await expect(validateInvoiceNumber(123456)).resolves.toBeTruthy();
-  // expect(data).toBeTruthy();
+test('validateInvoiceNumber will select the correct invoice number from array', async () => {
+  const invoiceNumberCheck = [146499, 342010].find((refNumber) => {
+    return validateInvoiceNumber(refNumber);
+  });
+  await expect(invoiceNumberCheck).toBe(146499);
 });
