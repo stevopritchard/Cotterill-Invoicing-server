@@ -1,5 +1,14 @@
 const fs = require('fs');
 const _ = require('lodash');
+const aws = require('aws-sdk');
+
+aws.config.update({
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  region: process.env.AWS_REGION,
+});
+
+const textract = new aws.Textract();
 
 const getText = (result, blocksMap) => {
   let text = '';
@@ -78,7 +87,7 @@ const getKeyValueMap = (blocks) => {
   return { keyMap, valueMap, blockMap };
 };
 
-const textractFormResponse = (req, textract) => {
+const textractFormResponse = (req) => {
   var requests = req.files.map(async (file, index) => {
     const filepath = fs.readFileSync(file.path);
     const params = {

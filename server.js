@@ -1,8 +1,6 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const aws = require('aws-sdk');
 const multer = require('multer');
-const fs = require('fs');
 const cors = require('cors');
 require('dotenv').config();
 
@@ -13,10 +11,8 @@ const PurchaseOrder = require('./src/models/PurchaseOrder');
 const app = express();
 
 // handlers for the Textract response objects
-const textractForm = require('./controllers/textractForm');
 const getFormData = require('./controllers/getFormData');
-const validateInvoiceNumber = require('./controllers/validateInvoiceNumber');
-const getTableData = require('./controllers/getTableData');
+const textractTable = require('./controllers/textractTable');
 
 var storage = multer.diskStorage({
   destination: __dirname + '/public/img',
@@ -49,14 +45,6 @@ if (process.env.NODE_ENV !== 'test') {
   app.listen(port, () => console.log(`Listening on port ${port}`));
 }
 
-aws.config.update({
-  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-  region: process.env.AWS_REGION,
-});
-
-const textract = new aws.Textract();
-
 app.post('/getFormData', upload.array('photo'), (req, res) => {
   getFormData(req)
     .then((validInvoices) => res.send(validInvoices))
@@ -64,7 +52,7 @@ app.post('/getFormData', upload.array('photo'), (req, res) => {
 });
 
 app.post('/getTableData', upload.single('photo'), (req, res) => {
-  getTableData.textractTable(req, res, textract);
+  textractTable.textractTable(req, res, textract);
 });
 
 app.post('/writePurchaseOrder', (req, res) => {
