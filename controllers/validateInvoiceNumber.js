@@ -1,7 +1,7 @@
 const PurchaseOrder = require('../src/models/PurchaseOrder');
 
 const validateInvoiceNumber = async (refNumber) => {
-  await PurchaseOrder.findOne({ refNumber: refNumber })
+  return await PurchaseOrder.findOne({ refNumber: refNumber })
     .then((foundPO) => {
       return foundPO ? true : false;
     })

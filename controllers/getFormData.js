@@ -5,6 +5,7 @@ const getFormData = async (req) => {
   const textractResponse = await Promise.all(
     textractForm.textractFormResponse(req)
   );
+
   return Promise.all(
     Object.values(textractResponse).map((invoice) => {
       return {
